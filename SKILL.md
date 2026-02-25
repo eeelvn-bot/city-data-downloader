@@ -17,7 +17,7 @@ Output:
   - Waterway (`*_waterway_*.geojson`)
 - Population clipped TIFF + colored TIFF + tile pyramid directory
 - Transport GeoJSONs:
-  - Roads (`*_roads_*.geojson`)
+  - Roads (`*_roads_*.geojson`, covering trunk + secondary/local connector road classes)
   - High-speed rail (`*_hsr_*.geojson`)
 - Combined city map HTML (multi-layer overlays + base-map switch)
 
@@ -32,7 +32,7 @@ python3 skills/city-data-downloader/scripts/download_city_data.py \
 ## Workflow
 
 1. Resolve city bounding box from Nominatim (China-only).
-2. Query Overpass for city POI data and export CSV/GeoJSON.
+2. Query Overpass for city POI data (including `place` and `military`) and export CSV/GeoJSON.
 3. Query Overpass for city landuse/natural/leisure features and export GeoJSON + summary.
 4. Query Overpass for hydro layers and export two files: water surface + waterway.
 5. Download WorldPop China raster when missing.
@@ -53,7 +53,7 @@ python3 skills/city-data-downloader/scripts/download_city_data.py \
 
 - `--city` (required): city name, prefer official Chinese form.
 - `--outdir`: output root directory. Default `./output/city_data`.
-- `--poi-keys`: OSM POI keys. Default `amenity,shop,tourism,leisure,office`.
+- `--poi-keys`: OSM POI keys. Default `amenity,shop,tourism,leisure,office,place,military`.
 - `--landuse-keys`: OSM landuse keys. Default `landuse,natural,leisure`.
 - `--skip-hydro`: skip hydro download (water surface/waterway).
 - `--zoom`: gdal2tiles zoom range. Default `8-14`.

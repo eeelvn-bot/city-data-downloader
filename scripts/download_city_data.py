@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download city POI, landuse, and population tiles by city name."""
+"""Download city POI/landuse/hydro/transport/population layers by city name."""
 
 from __future__ import annotations
 
@@ -29,9 +29,13 @@ DEFAULT_OVERPASS_ENDPOINTS = [
     "https://overpass.kumi.systems/api/interpreter",
 ]
 
-DEFAULT_POI_KEYS = ["amenity", "shop", "tourism", "leisure", "office"]
+DEFAULT_POI_KEYS = ["amenity", "shop", "tourism", "leisure", "office", "place", "military"]
 DEFAULT_LANDUSE_KEYS = ["landuse", "natural", "leisure"]
-DEFAULT_ROAD_FILTER = "^(motorway|trunk|primary|secondary|tertiary)$"
+DEFAULT_ROAD_FILTER = (
+    "^(motorway|trunk|primary|secondary|tertiary|"
+    "primary_link|secondary_link|tertiary_link|"
+    "unclassified|residential|living_street|service|road)$"
+)
 DEFAULT_HYDRO_WATERWAY_VALUES = ["river", "canal", "stream", "ditch", "drain"]
 DEFAULT_HYDRO_WATER_SURFACE_LANDUSE = ["reservoir", "basin"]
 
