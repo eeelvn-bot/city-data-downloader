@@ -20,6 +20,10 @@ Output:
   - Roads (`*_roads_*.geojson`, covering trunk + secondary/local connector road classes)
   - High-speed rail (`*_hsr_*.geojson`)
 - Combined city map HTML (multi-layer overlays + base-map switch)
+- Static exposure basemap package:
+  - `hangzhou_e_static_100m.tif` and intermediate `R_*` rasters
+  - `hangzhou_build_manifest.json`
+  - Preview PNG + HTML
 
 ## Quick Start
 
@@ -27,6 +31,14 @@ Output:
 python3 skills/city-data-downloader/scripts/download_city_data.py \
   --city 合肥市 \
   --outdir ./output/city_data
+```
+
+```bash
+python3 skills/city-data-downloader/scripts/build_static_exposure_basemap.py \
+  --city 杭州市 \
+  --outdir ./output/exposure_static/hangzhou \
+  --ghsl-src /path/to/GHSL_BUILT_S.tif \
+  --worldcover-src /path/to/ESA_WorldCover_Map.tif
 ```
 
 ## Workflow
@@ -49,6 +61,31 @@ python3 skills/city-data-downloader/scripts/download_city_data.py \
    - High-speed rail layer (toggle)
    - Base-map switch: normal map and satellite map
 
+## Static Exposure Workflow
+
+Use `build_static_exposure_basemap.py` when you need a city-wide static ground-exposure raster for risk modeling.
+
+It does the following:
+1. Resolve the city administrative boundary from OSM/Nominatim.
+2. Query OSM roads, rail, sensitive POIs, and landuse within `bbox + 2km`.
+3. Build a `100m` analysis grid in a projected CRS (default `EPSG:32651`).
+4. Prepare `WorldPop`, `GHSL`, and `WorldCover` inputs.
+5. Compute:
+   - `hangzhou_population_dasy_100m.tif`
+   - `hangzhou_r_pop_100m.tif`
+   - `hangzhou_r_built_100m.tif`
+   - `hangzhou_r_transport_100m.tif`
+   - `hangzhou_r_sensitive_100m.tif`
+   - `hangzhou_r_land_100m.tif`
+6. Compose `hangzhou_e_static_100m.tif`.
+7. Write manifest and preview files.
+
+Notes:
+- `WorldPop` is downloaded automatically if missing.
+- `GHSL` should usually be provided explicitly via `--ghsl-src` or `GHSL_BUILT_S_URL`.
+- `WorldCover` can be provided explicitly via `--worldcover-src`; if omitted, the script attempts official STAC discovery and local caching.
+- The script depends on `GDAL`, `numpy`, `shapely`, `pyproj`, `Pillow`, and `folium`.
+
 ## Main Arguments
 
 - `--city` (required): city name, prefer official Chinese form.
@@ -62,6 +99,9 @@ python3 skills/city-data-downloader/scripts/download_city_data.py \
 - `--skip-landuse`: skip landuse.
 - `--skip-transport`: skip roads/high-speed-rail download.
 - `--skip-map`: skip combined HTML map generation.
+- `--ghsl-src`: path or URL to GHSL built-up raster(s), repeatable.
+- `--worldcover-src`: path or URL to WorldCover raster(s), repeatable.
+- `--resolution`: target output resolution in meters for the static exposure raster.
 
 ## Notes
 
